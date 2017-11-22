@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2013 OpenWrt.org
+
+START=80
+USE_PROCD=1
+
+service_triggers() {
+	procd_add_reload_trigger leddisplay
+}
+
+start_service()
+{
+	local port="$(uci get leddisplay.@leddisplay[0].port)"
+	local hostid="$(uci get leddisplay.@leddisplay[0].hostid)"
+	local isp="$(uci get leddisplay.@leddisplay[0].ispproto)"
+	local server="$(uci get leddisplay.@leddisplay[0].host)"
+	local font="$(uci get leddisplay.@leddisplay[0].font)"
+	procd_open_instance
+	procd_set_param command leddisplay -p $port -h $hostid -i $isp -s $server -f $font
+	procd_set_param respawn
+	procd_close_instance
+}
